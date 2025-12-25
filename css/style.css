@@ -348,7 +348,8 @@ main {
   padding: 60px;
   border-radius: 4px;
   text-align: left;
-  transition: 0.4s;
+  transition: 0.4s, background-color 0.4s ease;
+  overflow: hidden;
   
   /* グラスモーフィズム効果 */
   background: rgba(255, 255, 255, 0.05);
@@ -806,20 +807,25 @@ canvas {
 }
 
 /* ホバー背景 */
-
 #hover-bg {
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.6s ease;
 }
 
-#hover-bg.is-visible {
+.bg-layer {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out; /* ここが「ふわり」の正体 */
+}
+
+.bg-layer.is-visible {
   opacity: 0.6;
 }
-
 
 /* ==========================================================================
    アニメーション

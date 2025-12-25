@@ -62,50 +62,50 @@ function initLoadingScreen() {
 // 2. ホバー背景（既存機能）
 // ==========================================================================
 
+// 81行目からの initHoverBackground をこれに差し替え
 function initHoverBackground() {
-  const bgContainer = document.getElementById('hover-bg');
-  const cards = document.querySelectorAll('.service-card');
+  const layers = [
+    document.getElementById('bg-layer-1'),
+    document.getElementById('bg-layer-2')
+  ];
+  let activeIndex = 0; // 現在表示しているのはどっちか
 
-  if (!bgContainer || !cards.length) return;
+  // service-card と project-item の両方を対象にする
+  const cards = document.querySelectorAll('.service-card, .project-item');
 
   const images = {
-    'bg-1': './images/bg1.png',
-    'bg-2': './images/bg2.png',
-    'bg-3': './images/bg3.png'
+    'bg1': './images/bg1.png',
+    'bg2': './images/bg2.png',
+    'bg3': './images/bg3.png'
   };
-
-  let hoverTimer = null;
-  let isVisible = false;
 
   cards.forEach(card => {
     card.addEventListener('mouseenter', () => {
       const bgId = card.dataset.image;
-      if (!images[bgId]) return;
+      if (!bgId || !images[bgId]) return;
 
-      // 高速 hover 対策
-      clearTimeout(hoverTimer);
+      // 次に使うレイヤーを決定
+      const nextIndex = 1 - activeIndex;
+      const nextLayer = layers[nextIndex];
+      const currentLayer = layers[activeIndex];
 
-      hoverTimer = setTimeout(() => {
-        bgContainer.style.backgroundImage = `url(${images[bgId]})`;
-        bgContainer.classList.add('is-visible');
-        isVisible = true;
-      }, 200); // ← ここが「人間的な遅延」
+      // 次のレイヤーに画像をセットしてフェードイン
+      nextLayer.style.backgroundImage = `url(${images[bgId]})`;
+      nextLayer.classList.add('is-visible');
+
+      // 今までのレイヤーをフェードアウト
+      currentLayer.classList.remove('is-visible');
+
+      // 状態を更新
+      activeIndex = nextIndex;
     });
 
     card.addEventListener('mouseleave', () => {
-      clearTimeout(hoverTimer);
-
-      // すぐ消さず、フェードアウトを必ず走らせる
-      if (isVisible) {
-        hoverTimer = setTimeout(() => {
-          bgContainer.classList.remove('is-visible');
-          isVisible = false;
-        }, 250);
-      }
+      // 全てのレイヤーを消す
+      layers.forEach(layer => layer.classList.remove('is-visible'));
     });
   });
 }
-
 
 // ==========================================================================
 // 3. スクロール時の表示アニメーション
